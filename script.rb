@@ -64,9 +64,9 @@ unless html_text.empty?
         http.request(request)
     end
 
-    LOGGER.info(response.code)
+    LOGGER.info(response.code.to_s + " - " + bills.length.to_s + " facture(s)")
     LOGGER.debug(response.body)
 
 else
-    LOGGER.info("Pas de factures à envoyer")
+    LOGGER.info("Aucune facture à envoyer")
 end
