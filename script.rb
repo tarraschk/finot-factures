@@ -5,7 +5,6 @@ require 'net/http'
 require 'uri'
 require 'json'
 require 'logger'
-require 'haml'
 
 CONFIG = YAML.load_file('config.yml')
 LOGGER = Logger.new(CONFIG["system"]["log_folder"]+'ovh.log', 'monthly')
@@ -22,28 +21,27 @@ client = Ovh::Client.new
 
 now = DateTime.now
 morning = DateTime.parse(now.strftime("%Y-%m-%dT00:00:00%z"))
-yesterday = morning - 1
+yesterday = morning - 20
 
 bills = client.get("/me/bill?date.from="+URI.encode_www_form_component(yesterday.to_s)+"&date.to="+URI.encode_www_form_component(morning.to_s))
 
 subject = CONFIG["sendinblue"]["subject"] + " - " + now.strftime("%d/%m/%Y %Hh%M")
 
-haml_title = "%h2 === " + subject + " ===\n%br"
+html_title = "<h2>=== " + subject + " ===</h2>"
 
-haml_text = bills.map do |bill_id|
+html_text = bills.map do |bill_id|
 
     bill = client.get("/me/bill/"+bill_id)
 
-    haml_text = "%h4 Facture n° #{ bill["billId"] } du #{ DateTime.parse(bill["date"]).strftime("%d/%m/%Y %Hh%M") } - Montant  #{ bill["priceWithoutTax"]["text"] } HT / #{ bill["priceWithTax"]["text"] } TTC\n"
-    haml_text += "%a{ href: '#{bill["pdfUrl"]}' } Télécharger la facture\n"
-    haml_text += "%br\n%br\n"
-    haml_text
+    html_text = "<h4>Facture n° #{ bill["billId"] } du #{ DateTime.parse(bill["date"]).strftime("%d/%m/%Y %Hh%M") } - Montant  #{ bill["priceWithoutTax"]["text"] } HT / #{ bill["priceWithTax"]["text"] } TTC</h4>"
+    html_text += "<a href='#{bill["pdfUrl"]}'>Télécharger la facture</a>"
+    html_text += "<br/><br/>"
+    html_text
 
-end.join("%br\n%br\n")
+end.join("<br/><br/>")
 
-unless haml_text.empty?
-
-    html_text = Haml::Template.new { haml_title + "\n\n\n" + haml_text }.render
+unless html_text.empty?
+    html_text = html_title + html_text
     LOGGER.debug(html_text)
 
     uri = URI.parse("https://api.sendinblue.com/v3/smtp/email")
