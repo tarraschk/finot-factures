@@ -1,0 +1,28 @@
+---
+ovh:
+# Generate them on https://eu.api.ovh.com/createToken/
+# This script requires permissions on GET /me/bill and /me/bill/*
+  application_key: XXXXXXXXXXXXXXXXXXXXXXX
+  application_secret: XXXXXXXXXXXXXXXXXXXXXXXXXXX
+  consumer_key: XXXXXXXXXXXXXXXXXXXXXX
+sendinblue:
+# Generate the API Key on https://app.sendinblue.com/settings/keys/api
+  api_key: XXXXXXXXXXXXXXXXXXXXXX
+# Subject of the email
+  subject: "[Admin/Finance] Nouvelles factures OVH"
+# Sender of the email
+  sender:
+    email: "XXXXXX@xxxx.xxxx"
+    name: "[XXX][Admin/Finance] Factures automatiques"
+# Recipients of the email
+  to:
+  - "email": "xxxx@xxxxx.xxx"
+    "name": "Xxxxx XXXXXXX"
+  - "email": "xxxx@xxxxx.xxx"
+    "name": "Xxxxx XXXXXXX"
+  - "email": "xxxx@xxxxx.xxx"
+    "name": "Xxxxx XXXXXXX"
+# System settings (logs)
+system:
+  log_level: "INFO" # INFO or DEBUG are recommended values
+  log_folder: "/var/log/"
