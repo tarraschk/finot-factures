@@ -21,7 +21,7 @@ client = Ovh::Client.new
 
 now = DateTime.now
 morning = DateTime.parse(now.strftime("%Y-%m-%dT00:00:00%z"))
-yesterday = morning - 20
+yesterday = morning - 1
 
 bills = client.get("/me/bill?date.from="+URI.encode_www_form_component(yesterday.to_s)+"&date.to="+URI.encode_www_form_component(morning.to_s))
 
